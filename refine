@@ -171,9 +171,9 @@ check_running() {
             RUNNING=`wget -q -O - $URL | grep "$CHECK_STR"`
         fi    
         
-        if [ -z "${RUNNING}" ] ; then
-            error "Something is already running on $URL but doesn't seem to be OpenRefine. Maybe a proxy issue?"
-        fi
+#        if [ -z "${RUNNING}" ] ; then
+#    error "Something is already running on $URL but doesn't seem to be OpenRefine. Maybe a proxy issue?"
+#        fi
     else
         RUNNING=""
     fi
@@ -679,7 +679,8 @@ run() {
         add_option "-Drefine.google_api_key=$REFINE_GOOGLE_API_KEY"
     fi
 
-    CLASSPATH="$REFINE_CLASSES_DIR${SEP}$REFINE_LIB_DIR/*"
+		CLASSPATH="$REFINE_CLASSES_DIR${SEP}$REFINE_LIB_DIR/*"
+		echo $CLASSPATH
 
     RUN_CMD="$JAVA -cp $CLASSPATH $OPTS com.google.refine.Refine"
 
@@ -932,6 +933,10 @@ fi
 
 if [ -z "$REFINE_CLASSES_DIR" ] ; then
     REFINE_CLASSES_DIR="server/classes"
+fi
+
+if [ -z "$EXT_LIB_DIR" ] ; then
+    EXT_LIB_DIR="server/extlib"
 fi
 
 if [ -z "$REFINE_LIB_DIR" ] ; then

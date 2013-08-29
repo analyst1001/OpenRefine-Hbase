@@ -52,6 +52,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.refine.ProjectMetadata;
 import com.google.refine.model.Project;
+import com.google.refine.hbase.HBaseWriterStream;
 
 
 public class ProjectMetadataUtilities {
@@ -74,8 +75,20 @@ public class ProjectMetadataUtilities {
 
         tempFile.renameTo(file);
     }
-
+    
     protected static void saveToFile(ProjectMetadata projectMeta, File metadataFile) throws JSONException, IOException   {
+      String projectID = metadataFile.getParentFile().getName();
+      Writer writer = new OutputStreamWriter(new HBaseWriterStream(projectID));
+      try {
+          JSONWriter jsonWriter = new JSONWriter(writer);
+          projectMeta.write(jsonWriter);
+      } finally {
+          writer.close();
+      }
+      saveToFile2(projectMeta, metadataFile);
+  }
+
+    protected static void saveToFile2(ProjectMetadata projectMeta, File metadataFile) throws JSONException, IOException   {
         Writer writer = new OutputStreamWriter(new FileOutputStream(metadataFile));
         try {
             JSONWriter jsonWriter = new JSONWriter(writer);

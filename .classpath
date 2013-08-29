@@ -79,5 +79,14 @@
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/commons-logging-1.1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/fluent-hc-4.2.5.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/httpmime-4.2.5.jar"/>
+	<classpathentry kind="lib" path="/home/user/hbase-0.94.11/src/main/java/org" sourcepath="/home/user/hbase-0.94.11/src/main/java/org"/>
+	<classpathentry kind="lib" path="/home/user/hbase-0.94.11/lib/hadoop-core-1.0.4.jar"/>
+	<classpathentry kind="lib" path="/home/user/hbase-0.94.11/hbase-0.94.11.jar" sourcepath="/home/user/hbase-0.94.11/src/main/java/org"/>
+	<classpathentry kind="lib" path="/home/user/hbase-0.94.11/hbase-0.94.11-tests.jar"/>
+	<classpathentry kind="lib" path="/home/user/hbase-0.94.11/lib/zookeeper-3.4.5.jar"/>
+	<classpathentry kind="lib" path="/home/user/Downloads/hbase-0.90.4.jar"/>
+	<classpathentry kind="lib" path="/home/user/hadoop-1.0.4/hadoop-core-1.0.4.jar"/>
+	<classpathentry kind="lib" path="/home/user/hbase-0.94.11/lib/commons-configuration-1.6.jar"/>
+	<classpathentry kind="lib" path="/home/user/hbase-0.94.11/lib/protobuf-java-2.4.0a.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

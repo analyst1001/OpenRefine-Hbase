@@ -83,6 +83,7 @@
             <include name="**/*.jar" />
         </fileset>
         <pathelement location="${webapp.classes.dir}"/>
+
     </path>
 
     <path id="tests.class.path">
@@ -133,7 +134,17 @@
         <mkdir dir="${webapp.classes.dir}" />
         <javac source="${java_version}" target="${java_version}" encoding="utf-8" destdir="${webapp.classes.dir}" debug="true" includeAntRuntime="no">
             <src path="${webapp.src.dir}"/>
-            <classpath refid="webapp.class.path" />
+            <classpath>
+							<fileset dir="${webapp.classes.dir}">
+								<include name="**/*.jar" />
+							</fileset>
+ 			  	    <fileset dir="${server.lib.dir}">
+      	  	    <include name="**/servlet-api*.jar" />
+        			</fileset>
+        			<fileset dir="${webapp.lib.dir}">
+            		<include name="**/*.jar" />
+        			</fileset>
+						</classpath>
         </javac>
         <copy file="${webapp.src.dir}/log4j.properties" tofile="${webapp.classes.dir}/log4j.properties"/>
     </target>
