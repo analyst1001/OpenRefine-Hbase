@@ -52,6 +52,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.refine.ProjectMetadata;
 import com.google.refine.model.Project;
+import com.google.refine.hbase.HBaseReader;
 import com.google.refine.hbase.HBaseWriterStream;
 
 
@@ -85,7 +86,7 @@ public class ProjectMetadataUtilities {
       } finally {
           writer.close();
       }
-      saveToFile2(projectMeta, metadataFile);
+  //    saveToFile2(projectMeta, metadataFile);
   }
 
     protected static void saveToFile2(ProjectMetadata projectMeta, File metadataFile) throws JSONException, IOException   {
@@ -155,16 +156,24 @@ public class ProjectMetadataUtilities {
         }
         return pm;
     }
-
+    
     static protected ProjectMetadata loadFromFile(File metadataFile) throws Exception {
-        FileReader reader = new FileReader(metadataFile);
-        try {
-            JSONTokener tokener = new JSONTokener(reader);
-            JSONObject obj = (JSONObject) tokener.nextValue();
-
+            String projectID = metadataFile.getParentFile().getName();
+            HBaseReader reader = new HBaseReader(projectID);
+            JSONObject obj = reader.getMetadataObj();
             return ProjectMetadata.loadFromJSON(obj);
-        } finally {
-            reader.close();
-        }
+
     }
+
+//    static protected ProjectMetadata loadFromFile2(File metadataFile) throws Exception {
+//        FileReader reader = new FileReader(metadataFile);
+//        try {
+//            JSONTokener tokener = new JSONTokener(reader);
+//            JSONObject obj = (JSONObject) tokener.nextValue();
+//
+//            return ProjectMetadata.loadFromJSON(obj);
+//        } finally {
+//            reader.close();
+//        }
+//    }
 }

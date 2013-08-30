@@ -15,9 +15,6 @@ import com.google.refine.util.JSONUtilities;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.client.HTable;
-import org.apache.hadoop.hbase.client.Result;
-import org.apache.hadoop.hbase.client.ResultScanner;
-import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.util.Bytes;
 
@@ -61,22 +58,12 @@ public class HBaseWriterStream extends OutputStream {
          }      
     }
     
-    // Replace by RowCounter Map Reduce job
-//    public int getRowsCount(String tableName) throws IOException {
-//        HTable table = new HTable(conf, tableName);
-//        Scan s = new Scan();
-//        ResultScanner rs = table.getScanner(s);
-//        int rowCount = 0;
-//        for (Result res = rs.next(); res != null; res = rs.next()) { rowCount++; }
-//        return rowCount;
-//    }
-    
     public void saveFromJSON(JSONObject obj) throws IOException {
         System.out.println("Saving from JSON");
         Date _created = JSONUtilities.getDate(obj, "created", new Date());
-        insertRecord(tableName, rowKey, "created", "created", _created.toString());
+        insertRecord(tableName, rowKey, "created", "created", String.format("%tFT%<tTZ", _created));
         Date _modified = JSONUtilities.getDate(obj, "modified", new Date());
-        insertRecord(tableName, rowKey, "modified", "modified", _modified.toString());
+        insertRecord(tableName, rowKey, "modified", "modified", String.format("%tFT%<tTZ", _modified));
         String _name = JSONUtilities.getString(obj, "name", "<Error recovering project name>");
         insertRecord(tableName, rowKey, "name", "name", _name.toString());
         String _password = JSONUtilities.getString(obj, "password", "");
@@ -85,10 +72,14 @@ public class HBaseWriterStream extends OutputStream {
         insertRecord(tableName, rowKey, "encoding", "encoding", _encoding.toString());
         int _encodingConfidence = JSONUtilities.getInt(obj, "encodingConfidence", 0);
         insertRecord(tableName, rowKey, "encodingConfidence", "encodingConfidence", _encodingConfidence);
+        System.out.println("Going to write preferences");
         if (obj.has("preferences") && !obj.isNull("preferences")) {
             try {
-                if (obj.has("entries") && !obj.isNull("entries")) {
-                    JSONObject entries = obj.getJSONObject("entries");
+                System.out.println("Inside preferences");
+                JSONObject obj2 = obj.getJSONObject("preferences");
+                if (obj2.has("entries") && !obj2.isNull("entries")) {
+                    System.out.println("Inside entries");
+                    JSONObject entries = obj2.getJSONObject("entries");
                     
                     @SuppressWarnings("unchecked")
                     Iterator<String> i = entries.keys();
@@ -96,7 +87,8 @@ public class HBaseWriterStream extends OutputStream {
                         String key = i.next();
                         if (!entries.isNull(key)) {
                             Object o = entries.get(key);
-                            insertRecord(tableName, rowKey, "preferences", "key", o.toString());
+                            System.out.println("Preferences " + key + " : " + o.toString());
+                            insertRecord(tableName, rowKey, "preferences", key, o.toString());
                         }
                     }
                 }
@@ -104,7 +96,7 @@ public class HBaseWriterStream extends OutputStream {
                 // ignore
             }
         }
-        
+        System.out.println("Going to write custom metadata");
         if (obj.has("customMetadata") && !obj.isNull("customMetadata")) {
             try {
                 JSONObject obj2 = obj.getJSONObject("customMetadata");
@@ -115,6 +107,7 @@ public class HBaseWriterStream extends OutputStream {
                     String key = keys.next();
                     Object value = obj2.get(key);
                     if (value != null && value instanceof Serializable) {
+                        System.out.println("customMetadata " + key + " : " + value.toString());
                         insertRecord(tableName, rowKey, "customMetadata", key, value.toString());
                     }
                 }
@@ -147,9 +140,6 @@ public class HBaseWriterStream extends OutputStream {
             throws IOException {
         System.out.println("wrinting " + (char) b);
         buffer = buffer + (char) b;
-//        if (currIndex > MAX_LENGTH) {
-//            flush();
-//        }
     }
     
     @Override
