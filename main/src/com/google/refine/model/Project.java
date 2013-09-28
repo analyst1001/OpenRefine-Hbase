@@ -57,6 +57,7 @@ import org.slf4j.LoggerFactory;
 import com.google.refine.ProjectManager;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.RefineServlet;
+import com.google.refine.hbase.HBaseProjectDataWriterStream;
 import com.google.refine.history.History;
 import com.google.refine.process.ProcessManager;
 import com.google.refine.util.ParsingUtilities;
@@ -125,6 +126,44 @@ public class Project {
 
     public ProjectMetadata getMetadata() {
         return ProjectManager.singleton.getProjectMetadata(id);
+    }
+    
+    public void saveToTable() {
+        for (OverlayModel overlayModel : overlayModels.values()) {
+            try {
+                overlayModel.onBeforeSave(this);
+            } catch (Exception e) {
+                logger.warn("Error signaling overlay model before saving", e);
+            }
+        }
+        HBaseProjectDataWriterStream out = new HBaseProjectDataWriterStream(Long.toString(this.id));
+        Writer writer = new OutputStreamWriter(out);
+        try {
+            Properties options = new Properties();
+            options.setProperty("mode", "save");
+            //options.put("pool", pool);
+
+            saveToWriter(writer, options);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } finally {
+            try {
+                writer.flush();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+        
+        for (OverlayModel overlayModel : overlayModels.values()) {
+            try {
+                overlayModel.onAfterSave(this);
+            } catch (Exception e) {
+                logger.warn("Error signaling overlay model after saving", e);
+            }
+        }
+        
     }
 
     public void saveToOutputStream(OutputStream out, Pool pool) throws IOException {

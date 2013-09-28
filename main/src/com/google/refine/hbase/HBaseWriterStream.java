@@ -21,16 +21,13 @@ import org.apache.hadoop.hbase.util.Bytes;
 
 public class HBaseWriterStream extends OutputStream {
 
-    final static int MAX_LENGTH = 10000;
     String buffer;
-    int currIndex;
     private static Configuration conf = null;
     private static String tableName = null;
     String rowKey = null;
     //Constructor
     public HBaseWriterStream(String projectID) {
         buffer = new String();
-        currIndex = 0;
         conf = (new HBaseConfiguration()).create();
         tableName = new String("metadata");
         rowKey = projectID;
@@ -59,7 +56,6 @@ public class HBaseWriterStream extends OutputStream {
     }
     
     public void saveFromJSON(JSONObject obj) throws IOException {
-        System.out.println("Saving from JSON");
         Date _created = JSONUtilities.getDate(obj, "created", new Date());
         insertRecord(tableName, rowKey, "created", "created", String.format("%tFT%<tTZ", _created));
         Date _modified = JSONUtilities.getDate(obj, "modified", new Date());
@@ -72,13 +68,10 @@ public class HBaseWriterStream extends OutputStream {
         insertRecord(tableName, rowKey, "encoding", "encoding", _encoding.toString());
         int _encodingConfidence = JSONUtilities.getInt(obj, "encodingConfidence", 0);
         insertRecord(tableName, rowKey, "encodingConfidence", "encodingConfidence", _encodingConfidence);
-        System.out.println("Going to write preferences");
         if (obj.has("preferences") && !obj.isNull("preferences")) {
             try {
-                System.out.println("Inside preferences");
                 JSONObject obj2 = obj.getJSONObject("preferences");
                 if (obj2.has("entries") && !obj2.isNull("entries")) {
-                    System.out.println("Inside entries");
                     JSONObject entries = obj2.getJSONObject("entries");
                     
                     @SuppressWarnings("unchecked")
@@ -87,7 +80,6 @@ public class HBaseWriterStream extends OutputStream {
                         String key = i.next();
                         if (!entries.isNull(key)) {
                             Object o = entries.get(key);
-                            System.out.println("Preferences " + key + " : " + o.toString());
                             insertRecord(tableName, rowKey, "preferences", key, o.toString());
                         }
                     }
@@ -96,7 +88,6 @@ public class HBaseWriterStream extends OutputStream {
                 // ignore
             }
         }
-        System.out.println("Going to write custom metadata");
         if (obj.has("customMetadata") && !obj.isNull("customMetadata")) {
             try {
                 JSONObject obj2 = obj.getJSONObject("customMetadata");
@@ -107,7 +98,6 @@ public class HBaseWriterStream extends OutputStream {
                     String key = keys.next();
                     Object value = obj2.get(key);
                     if (value != null && value instanceof Serializable) {
-                        System.out.println("customMetadata " + key + " : " + value.toString());
                         insertRecord(tableName, rowKey, "customMetadata", key, value.toString());
                     }
                 }
@@ -132,13 +122,11 @@ public class HBaseWriterStream extends OutputStream {
     @Override
     public void flush() {
         parseAndExecute();
-        currIndex = 0;
     }
     
     @Override
     public void write(int b)
             throws IOException {
-        System.out.println("wrinting " + (char) b);
         buffer = buffer + (char) b;
     }
     
