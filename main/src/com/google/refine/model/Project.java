@@ -57,6 +57,7 @@ import org.slf4j.LoggerFactory;
 import com.google.refine.ProjectManager;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.RefineServlet;
+import com.google.refine.hbase.HBaseDataReader;
 import com.google.refine.hbase.HBaseProjectDataWriterStream;
 import com.google.refine.history.History;
 import com.google.refine.process.ProcessManager;
@@ -222,6 +223,18 @@ public class Project {
         }
     }
     
+    static public Project loadFromTable(long id) {
+        Project project = new Project(id);
+        HBaseDataReader r = new HBaseDataReader(project);
+        try {
+            r.loadFromTable();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return project;
+    }
+
     static public Project loadFromInputStream(InputStream is, long id, Pool pool) throws Exception {
         return loadFromReader(new LineNumberReader(new InputStreamReader(is, "UTF-8")), id, pool);
     }

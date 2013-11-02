@@ -16,6 +16,8 @@ import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.hbase.filter.Filter;
 import org.apache.hadoop.hbase.filter.PrefixFilter;
 import org.apache.hadoop.hbase.KeyValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HBaseReader {
 

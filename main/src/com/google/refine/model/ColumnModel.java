@@ -54,8 +54,8 @@ public class ColumnModel implements Jsonizable {
     final public List<Column>      columns = new LinkedList<Column>();
     final public List<ColumnGroup> columnGroups = new LinkedList<ColumnGroup>();
     
-    private int _maxCellIndex = -1;
-    private int _keyColumnIndex;
+    public int _maxCellIndex = -1;
+    public int _keyColumnIndex;
     
     transient protected Map<String, Column>  _nameToColumn;
     transient protected Map<Integer, Column> _cellIndexToColumn;

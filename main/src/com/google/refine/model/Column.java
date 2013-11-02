@@ -50,7 +50,7 @@ import com.google.refine.util.ParsingUtilities;
 public class Column implements Jsonizable {
     final private int       _cellIndex;
     final private String    _originalName;
-    private String          _name;
+    public String          _name;               // Changed to public for use
     private ReconConfig     _reconConfig;
     private ReconStats      _reconStats;
     

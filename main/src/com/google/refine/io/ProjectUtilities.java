@@ -124,38 +124,46 @@ public class ProjectUtilities {
             out.close();
         }
     }
-
+    
     static public Project load(File dir, long id) {
-        try {
-            File file = new File(dir, "data.zip");
-            if (file.exists()) {
-                return loadFromFile(file, id);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        try {
-            File file = new File(dir, "data.temp.zip");
-            if (file.exists()) {
-                return loadFromFile(file, id);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        try {
-            File file = new File(dir, "data.old.zip");
-            if (file.exists()) {
-                return loadFromFile(file, id);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return null;
+        return loadFromTable(id);
     }
 
+//    static public Project load(File dir, long id) {
+//        try {
+//            File file = new File(dir, "data.zip");
+//            if (file.exists()) {
+//                return loadFromFile(file, id);
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//        try {
+//            File file = new File(dir, "data.temp.zip");
+//            if (file.exists()) {
+//                return loadFromFile(file, id);
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//        try {
+//            File file = new File(dir, "data.old.zip");
+//            if (file.exists()) {
+//                return loadFromFile(file, id);
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//        return null;
+//    }
+
+    static protected Project loadFromTable(long id) {
+        return Project.loadFromTable(id);
+    }
+    
     static protected Project loadFromFile(
             File file,
             long id
